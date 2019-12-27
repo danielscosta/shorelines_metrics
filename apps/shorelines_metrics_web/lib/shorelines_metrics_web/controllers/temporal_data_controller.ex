@@ -6,10 +6,23 @@ defmodule ShorelinesMetricsWeb.TemporalDataController do
 
   action_fallback ShorelinesMetricsWeb.FallbackController
 
-  def index(conn, _params) do
+  def index(conn, params) when map_size(params) == 0 do
     temporal_datas = Dashboards.list_temporal_datas()
     render(conn, "index.json", temporal_datas: temporal_datas)
   end
+
+  def index(conn, params) do
+    temporal_datas = Dashboards.list_temporal_datas_by_params(keys_to_atoms(params))
+    render(conn, "index.json", temporal_datas: temporal_datas)
+  end
+
+  def keys_to_atoms(%_{} = value), do: value
+
+  def keys_to_atoms(%{} = string_key_map),
+    do:
+      for({key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), keys_to_atoms(val)})
+
+  def keys_to_atoms(value), do: value
 
   def create(conn, %{"temporal_data" => temporal_data_params}) do
     with {:ok, %TemporalData{} = temporal_data} <-

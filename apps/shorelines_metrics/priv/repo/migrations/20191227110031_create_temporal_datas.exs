@@ -6,7 +6,7 @@ defmodule ShorelinesMetrics.Repo.Migrations.CreateTemporalDatas do
       add :id, :binary_id, primary_key: true
       add :occur_datetime, :naive_datetime
       add :value, :float
-      add :serie_id, references(:series, on_delete: :nothing, type: :binary_id)
+      add :serie_id, references(:series, on_delete: :delete_all, type: :binary_id)
 
       timestamps()
     end

@@ -86,6 +86,28 @@ defmodule ShorelinesMetrics.DashboardsTest do
       assert Dashboards.list_temporal_datas() == [temporal_data]
     end
 
+    test "list_temporal_datas_by/1 returns temporal_data" do
+      temporal_data = temporal_data_fixture()
+      assert Dashboards.list_temporal_datas_by_params(%{tags: ["some tag"]}) == [temporal_data]
+      assert Dashboards.list_temporal_datas_by_params(%{tags: ["another tag"]}) == []
+
+      assert Dashboards.list_temporal_datas_by_params(%{ids: [temporal_data.serie_id]}) == [
+               temporal_data
+             ]
+
+      assert Dashboards.list_temporal_datas_by_params(%{
+               ids: ["e57ce060-c025-43a2-9033-d4c3ce8181b0"]
+             }) == []
+
+      assert Dashboards.list_temporal_datas_by_params(%{
+               time_range: %{min: ~N[2010-04-17 13:00:00], max: ~N[2010-04-17 15:00:00]}
+             }) == [temporal_data]
+
+      assert Dashboards.list_temporal_datas_by_params(%{
+               time_range: %{min: ~N[2010-04-17 11:00:00], max: ~N[2010-04-17 12:00:00]}
+             }) == []
+    end
+
     test "get_temporal_data!/1 returns the temporal_data with given id" do
       temporal_data = temporal_data_fixture()
       assert Dashboards.get_temporal_data!(temporal_data.id) == temporal_data

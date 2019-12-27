@@ -3,12 +3,14 @@ defmodule ShorelinesMetrics.Dashboards.TemporalData do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias ShorelinesMetrics.Dashboards.Serie
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "temporal_datas" do
     field :occur_datetime, :naive_datetime
     field :value, :float
-    field :serie_id, :binary_id
+    belongs_to :serie, Serie
 
     timestamps()
   end

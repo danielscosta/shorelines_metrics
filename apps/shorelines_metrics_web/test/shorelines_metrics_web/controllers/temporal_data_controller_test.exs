@@ -28,8 +28,31 @@ defmodule ShorelinesMetricsWeb.TemporalDataControllerTest do
   end
 
   describe "index" do
+    setup [:create_temporal_data]
+
     test "lists all temporal_datas", %{conn: conn} do
       conn = get(conn, Routes.temporal_data_path(conn, :index))
+      assert length(json_response(conn, 200)["data"]) == 1
+    end
+
+    test "lists temporal_datas by params", %{conn: conn} do
+      conn = get(conn, Routes.temporal_data_path(conn, :index), %{tags: ["some tag"]})
+      assert length(json_response(conn, 200)["data"]) == 1
+      conn = get(conn, Routes.temporal_data_path(conn, :index), %{tags: ["another tag"]})
+      assert json_response(conn, 200)["data"] == []
+
+      conn =
+        get(conn, Routes.temporal_data_path(conn, :index), %{
+          time_range: %{min: ~N[2010-04-17 13:00:00], max: ~N[2010-04-17 15:00:00]}
+        })
+
+      assert length(json_response(conn, 200)["data"]) == 1
+
+      conn =
+        get(conn, Routes.temporal_data_path(conn, :index), %{
+          time_range: %{min: ~N[2010-04-17 11:00:00], max: ~N[2010-04-17 12:00:00]}
+        })
+
       assert json_response(conn, 200)["data"] == []
     end
   end

@@ -118,6 +118,44 @@ defmodule ShorelinesMetrics.Dashboards do
   end
 
   @doc """
+  Returns the list of temporal_datas by params.
+
+  ## Examples
+
+      iex> list_temporal_datas_by(params)
+      [%TemporalData{}, ...]
+
+  """
+  def list_temporal_datas_by_params(params) do
+    TemporalData
+    |> join(:inner, [t], s in assoc(t, :serie))
+    |> query_list_temporal_datas_by_serie_id_or_tag(params)
+    |> query_list_temporal_datas_by_time_range(params)
+    |> Repo.all()
+  end
+
+  defp query_list_temporal_datas_by_serie_id_or_tag(query, params)
+
+  defp query_list_temporal_datas_by_serie_id_or_tag(query, %{ids: ids, tags: tags})
+       when is_list(ids) and is_list(tags),
+       do: where(query, [_t, s], s.id in ^ids or s.tag in ^tags)
+
+  defp query_list_temporal_datas_by_serie_id_or_tag(query, %{ids: ids}) when is_list(ids),
+    do: where(query, [_t, s], s.id in ^ids)
+
+  defp query_list_temporal_datas_by_serie_id_or_tag(query, %{tags: tags}) when is_list(tags),
+    do: where(query, [_t, s], s.tag in ^tags)
+
+  defp query_list_temporal_datas_by_serie_id_or_tag(query, _), do: query
+
+  defp query_list_temporal_datas_by_time_range(query, params)
+
+  defp query_list_temporal_datas_by_time_range(query, %{time_range: %{min: min, max: max}}),
+    do: where(query, [t], t.occur_datetime > ^min and t.occur_datetime <= ^max)
+
+  defp query_list_temporal_datas_by_time_range(query, _), do: query
+
+  @doc """
   Gets a single temporal_data.
 
   Raises `Ecto.NoResultsError` if the Temporal data does not exist.
