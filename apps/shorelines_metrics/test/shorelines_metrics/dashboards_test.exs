@@ -67,11 +67,14 @@ defmodule ShorelinesMetrics.DashboardsTest do
 
     @valid_attrs %{occur_datetime: ~N[2010-04-17 14:00:00], value: 120.5}
     @update_attrs %{occur_datetime: ~N[2011-05-18 15:01:01], value: 456.7}
-    @invalid_attrs %{occur_datetime: nil, value: nil}
+    @invalid_attrs %{occur_datetime: nil, value: nil, serie_id: nil}
 
     def temporal_data_fixture(attrs \\ %{}) do
+      {:ok, serie} = Dashboards.create_serie(%{tag: "some tag"})
+
       {:ok, temporal_data} =
         attrs
+        |> Map.put(:serie_id, serie.id)
         |> Enum.into(@valid_attrs)
         |> Dashboards.create_temporal_data()
 
@@ -89,8 +92,10 @@ defmodule ShorelinesMetrics.DashboardsTest do
     end
 
     test "create_temporal_data/1 with valid data creates a temporal_data" do
+      {:ok, serie} = Dashboards.create_serie(%{tag: "some tag"})
+
       assert {:ok, %TemporalData{} = temporal_data} =
-               Dashboards.create_temporal_data(@valid_attrs)
+               Dashboards.create_temporal_data(Map.put(@valid_attrs, :serie_id, serie.id))
 
       assert temporal_data.occur_datetime == ~N[2010-04-17 14:00:00]
       assert temporal_data.value == 120.5

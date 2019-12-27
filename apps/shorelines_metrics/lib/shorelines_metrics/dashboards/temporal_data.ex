@@ -16,7 +16,7 @@ defmodule ShorelinesMetrics.Dashboards.TemporalData do
   @doc false
   def changeset(temporal_data, attrs) do
     temporal_data
-    |> cast(attrs, [:occur_datetime, :value])
-    |> validate_required([:occur_datetime, :value])
+    |> cast(attrs, [:occur_datetime, :value, :serie_id])
+    |> validate_required([:occur_datetime, :value, :serie_id])
   end
 end

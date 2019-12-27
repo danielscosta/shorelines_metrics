@@ -12,10 +12,14 @@ defmodule ShorelinesMetricsWeb.TemporalDataControllerTest do
     occur_datetime: ~N[2011-05-18 15:01:01],
     value: 456.7
   }
-  @invalid_attrs %{occur_datetime: nil, value: nil}
+  @invalid_attrs %{occur_datetime: nil, value: nil, serie_id: nil}
 
   def fixture(:temporal_data) do
-    {:ok, temporal_data} = Dashboards.create_temporal_data(@create_attrs)
+    {:ok, serie} = Dashboards.create_serie(%{tag: "some tag"})
+
+    {:ok, temporal_data} =
+      Dashboards.create_temporal_data(Map.put(@create_attrs, :serie_id, serie.id))
+
     temporal_data
   end
 
@@ -32,7 +36,13 @@ defmodule ShorelinesMetricsWeb.TemporalDataControllerTest do
 
   describe "create temporal_data" do
     test "renders temporal_data when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.temporal_data_path(conn, :create), temporal_data: @create_attrs)
+      {:ok, serie} = Dashboards.create_serie(%{tag: "some tag"})
+
+      conn =
+        post(conn, Routes.temporal_data_path(conn, :create),
+          temporal_data: Map.put(@create_attrs, :serie_id, serie.id)
+        )
+
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.temporal_data_path(conn, :show, id))
