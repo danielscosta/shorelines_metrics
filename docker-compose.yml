@@ -30,7 +30,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-mix
-    command: mix do ecto.drop, ecto.create, ecto.migrate, test, coveralls, credo --strict
+    command: mix do ecto.drop, ecto.create, ecto.migrate, test, credo --strict
     volumes:
       - .:/shorelines_metrics
       - "build:/shorelines_metrics/_build"

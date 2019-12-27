@@ -9,9 +9,13 @@ Create database
 
 `$ docker-compose run web mix ecto.create`
 
-To run test, coveralls and credo
+To run test and credo
 
 `$ docker-compose run --rm test`
+
+To run coveralls
+
+`$ docker-compose run --rm test mix coveralls`
 
 Run release of the phoenix server:
 
