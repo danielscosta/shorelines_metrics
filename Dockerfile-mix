@@ -1,0 +1,25 @@
+# https://hub.docker.com/_/elixir/
+FROM elixir:1.9-alpine
+
+# init
+RUN apk update && \
+    apk add ca-certificates && update-ca-certificates && \
+    apk add git bash postgresql-client openssl curl && \
+    mix local.hex --force && \
+    mix local.rebar --force && \
+    mkdir -p /shorelines_metrics 
+
+COPY . /shorelines_metrics
+ENV MIX_ENV=prod
+
+# get and compile elixir deps
+RUN apk add --update alpine-sdk coreutils
+
+RUN cd /shorelines_metrics && \
+    mix deps.get && mix compile
+
+WORKDIR /shorelines_metrics
+
+EXPOSE 4000
+
+CMD ["sh", "-c", "mix phx.server"]

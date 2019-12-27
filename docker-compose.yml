@@ -1,0 +1,56 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5403:5432"
+    networks:
+      default:
+        aliases:
+          - shorelines-metrics-db
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile-mix
+    volumes:
+      - .:/shorelines_metrics
+      - "build:/shorelines_metrics/_build"
+      - "deps:/shorelines_metrics/deps"  
+    environment:
+      - MIX_ENV=prod
+      - PG_HOST=shorelines-metrics-db
+    depends_on:
+      - db
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile-mix
+    command: mix do ecto.drop, ecto.create, ecto.migrate, test, coveralls, credo --strict
+    volumes:
+      - .:/shorelines_metrics
+      - "build:/shorelines_metrics/_build"
+      - "deps:/shorelines_metrics/deps"
+    environment:
+      - MIX_ENV=test
+      - PG_HOST=shorelines-metrics-db
+    depends_on:
+      - db
+
+  release:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MIX_ENV=prod
+      - PG_HOST=shorelines-metrics-db
+    depends_on:
+      - db
+
+volumes:
+  build:
+  deps:
