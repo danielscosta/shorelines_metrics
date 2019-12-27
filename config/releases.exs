@@ -9,6 +9,7 @@ config :shorelines_metrics, ShorelinesMetrics.Repo,
 
 config :shorelines_metrics_web, ShorelinesMetricsWeb.Endpoint,
   http: [:inet6, port: String.to_integer(System.get_env("PORT") || "4000")],
+  server: true,
   secret_key_base:
     System.get_env("SECRET_KEY_BASE") ||
       "l3rgZ3jIqLBJVu4WMHPjIdzwwugJqBFIsQumIlXDmNjQoDp9zBlotPhO5z7NcY/6"

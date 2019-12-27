@@ -17,8 +17,7 @@ config :shorelines_metrics, ShorelinesMetrics.Repo,
 # which you should run after static files are built and
 # before starting your production server.
 config :shorelines_metrics_web, ShorelinesMetricsWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "example.com", port: 80]
 
 # ## SSL Support
 #
